@@ -1,5 +1,7 @@
-# excel-export #
+# excel-export2 #
 
+引用：[https://github.com/functionscope/Node-Excel-Export](https://github.com/functionscope/Node-Excel-Export)
+    
 A simple node.js module for exporting data set to Excel xlsx file.
 
 ## Using excel-export ##
