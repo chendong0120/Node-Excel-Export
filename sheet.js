@@ -67,7 +67,7 @@ Sheet.prototype.generate = function(){
 				};
 				cellData = cols[j].beforeCellWrite(r, cellData, e);
 				styleIndex = e.styleIndex || styleIndex;
-				cellType = e.cellType;
+        cellType = e.cellType && e.cellType.toLowerCase();
 				delete e;
 			}
 			switch (cellType) {
@@ -92,8 +92,6 @@ Sheet.prototype.generate = function(){
 	}
 	xlsx.file(config.fileName, sheetFront + '<x:sheetData>' + rows + '</x:sheetData>' + sheetBack);
 }
-
-module.exports = Sheet;
 
 var startTag = function (obj, tagName, closed){
   var result = "<" + tagName, p;
@@ -138,7 +136,6 @@ var addBoolCell = function(cellRef, value, styleIndex){
 	return '<x:c r="'+cellRef+'" s="'+ styleIndex + '" t="b"><x:v>'+value+'</x:v></x:c>';
 };
 
-
 var addStringCell = function(sheet, cellRef, value, styleIndex){
   styleIndex = styleIndex || 0;
 	if (value===null)
@@ -146,20 +143,24 @@ var addStringCell = function(sheet, cellRef, value, styleIndex){
   if (typeof value ==='string'){
     value = value.replace(/&/g, "&amp;").replace(/'/g, "&apos;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
   }
-  var i = sheet.shareStrings.get(value, -1);
-	if ( i< 0){
-    i = sheet.shareStrings.length;
-  	sheet.shareStrings.add(value, i);
-    sheet.convertedShareStrings += "<x:si><x:t>"+value+"</x:t></x:si>";
+	var i
+	if (!sheet.shareStrings.has(value)) {
+		i = -1
+	} else {
+		i = sheet.shareStrings.get(value)
+	}
+	if (i < 0) {
+		i = sheet.shareStrings.size
+		sheet.shareStrings.set(value, i)
+		sheet.convertedShareStrings += '<x:si><x:t>' + value + '</x:t></x:si>'
 	}
 	return '<x:c r="'+cellRef+'" s="'+ styleIndex + '" t="s"><x:v>'+i+'</x:v></x:c>';
 };
 
-
 var getColumnLetter = function(col){
   if (col <= 0)
 	throw "col must be more than 0";
-  var array = new Array();
+  var array = [];
   while (col > 0)
   {
 	var remainder = col % 26;
@@ -174,3 +175,5 @@ var getColumnLetter = function(col){
   }
   return String.fromCharCode.apply(null, array.reverse());
 };
+
+module.exports = Sheet;

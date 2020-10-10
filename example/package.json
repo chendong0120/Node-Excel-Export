@@ -4,7 +4,7 @@
   "version": "0.3.1",
   "private": true,
   "dependencies": {
-    "excel-export-3": "0.5.2",
+    "excel-export-3": "0.5.3",
     "express": "3.x",
     "node-uuid": "^1.4.1",
     "jszip": "^2.6.0"
